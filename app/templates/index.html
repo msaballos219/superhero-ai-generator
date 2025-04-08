@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Superhero Generator</title>
+</head>
+<body>
+<h1>Superhero Generator</h1>
+<form action="/" method="post">
+    <label for="description">Enter your hero description:</label><br>
+    <textarea name="description" id="description" required rows="4" cols="50"></textarea><br><br>
+    <button type="submit">Create Superhero!</button>
+</form>
+
+{% if input %}
+    <h2>Your input was:</h2>
+    <p>{{ input }}</p>
+{% endif %}
+</body>
+</html>
