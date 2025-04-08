@@ -5,15 +5,18 @@
 </head>
 <body>
 <h1>Superhero Generator</h1>
-<form action="/" method="post">
-    <label for="description">Enter your hero description:</label><br>
-    <textarea name="description" id="description" required rows="4" cols="50"></textarea><br><br>
-    <button type="submit">Create Superhero!</button>
-</form>
-
-{% if input %}
-    <h2>Your input was:</h2>
-    <p>{{ input }}</p>
+{% if hero_name and hero_backstory %}
+    <h2>Superhero Name: {{ hero_name }}</h2>
+    <p><strong>Backstory:</strong> {{ hero_backstory }}</p>
+{% elif error %}
+    <p><strong>Error:</strong> {{ error }}</p>
 {% endif %}
+
+<form method="POST">
+    <label>
+        <textarea name="description" placeholder="Describe your hero clearly here...">{{ description or "" }}</textarea>
+    </label>
+    <button type="submit">Generate Hero!</button>
+</form>
 </body>
 </html>
