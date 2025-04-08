@@ -5,15 +5,22 @@
 </head>
 <body>
 <h1>Superhero Generator</h1>
-<form action="/" method="post">
-    <label for="description">Enter your hero description:</label><br>
-    <textarea name="description" id="description" required rows="4" cols="50"></textarea><br><br>
-    <button type="submit">Create Superhero!</button>
+{% if hero_name and hero_backstory %}
+    <h2>{{ hero_name }}</h2>
+    <p>{{ hero_backstory }}</p>
+    {% if hero_image_url %}
+        <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
+    {% else %}
+        <p>(No image generated!)</p>
+    {% endif %}
+{% endif %}
+
+<form method="POST">
+    <label>
+        <textarea name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
+    </label><br>
+    <button type="submit">Generate Hero + Image!</button>
 </form>
 
-{% if input %}
-    <h2>Your input was:</h2>
-    <p>{{ input }}</p>
-{% endif %}
 </body>
 </html>
