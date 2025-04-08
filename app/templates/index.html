@@ -1,26 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Superhero Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+
+        <!-- Custom styles to enhance page visibility -->
+    <style>
+        body {
+            background-color: #3ca6a0; /* Soft pastel shade for gentle visibility */
+        }
+        /* Explicitly enhance textarea outline for clarity */
+        .textarea {
+            border: 2px solid #3273dc; /* Soft Bulma-blue border */
+        }
+    </style>
 </head>
 <body>
-<h1>Superhero Generator</h1>
-{% if hero_name and hero_backstory %}
-    <h2>{{ hero_name }}</h2>
-    <p>{{ hero_backstory }}</p>
-    {% if hero_image_url %}
-        <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
-    {% else %}
-        <p>(No image generated!)</p>
-    {% endif %}
-{% endif %}
 
-<form method="POST">
-    <label>
-        <textarea name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
-    </label><br>
-    <button type="submit">Generate Hero + Image!</button>
-</form>
+<!-- Navbar -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="">
+            <img src="{{ url_for('static', filename='supervillain-dark-skin-tone.svg') }}" alt="Superhero Logo" width="112" height="28">
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item">Home</a>
+            <a class="navbar-item">Documentation</a>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">More</a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item">About</a>
+                    <a class="navbar-item">Contact</a>
+                    <a class="navbar-item">Report an issue</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary"><strong>Sign up</strong></a>
+                    <a class="button is-light">Log in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content Container -->
+<div class="section">
+    <div class="container has-text-centered">
+
+        <!-- Hero Image Container: Replace comment below with your chosen placeholder image -->
+        <div class="box" style="display: inline-block;">
+            {% if hero_image_url %}
+                <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
+            {% else %}
+                <img src="{{ url_for('static', filename='superhero-placeholder.jpg') }}" alt="Placeholder" style="max-width: 500px;">
+            {% endif %}
+        </div>
+
+        <!-- Generated Hero Name and Backstory -->
+        {% if hero_name and hero_backstory %}
+            <div class="content">
+                <h2 class="title is-3">{{ hero_name }}</h2>
+                <p>{{ hero_backstory }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Input Form -->
+        <form method="POST" class="mt-5">
+            <div class="field">
+                <div class="control">
+                    <textarea class="textarea" name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary is-medium" type="submit">Generate Hero + Image!</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    //  select navbar burger element
+    const burger = document.querySelector('.navbar-burger');
+    const menu = document.querySelector('.navbar-menu');
+
+    //  click event to toggle menu visibility
+    burger.addEventListener('click', () => {
+        burger.classList.toggle('is-active');
+        menu.classList.toggle('is-active');
+    });
+});
+</script>
+
 
 </body>
 </html>
