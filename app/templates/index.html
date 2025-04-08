@@ -6,17 +6,21 @@
 <body>
 <h1>Superhero Generator</h1>
 {% if hero_name and hero_backstory %}
-    <h2>Superhero Name: {{ hero_name }}</h2>
-    <p><strong>Backstory:</strong> {{ hero_backstory }}</p>
-{% elif error %}
-    <p><strong>Error:</strong> {{ error }}</p>
+    <h2>{{ hero_name }}</h2>
+    <p>{{ hero_backstory }}</p>
+    {% if hero_image_url %}
+        <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
+    {% else %}
+        <p>(No image generated!)</p>
+    {% endif %}
 {% endif %}
 
 <form method="POST">
     <label>
-        <textarea name="description" placeholder="Describe your hero clearly here...">{{ description or "" }}</textarea>
-    </label>
-    <button type="submit">Generate Hero!</button>
+        <textarea name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
+    </label><br>
+    <button type="submit">Generate Hero + Image!</button>
 </form>
+
 </body>
 </html>
