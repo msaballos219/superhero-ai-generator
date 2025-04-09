@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from utils.clean_text import clean_generated_text
 import requests
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -18,6 +19,12 @@ nebius_client = OpenAI(
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    hero_name = None
+    hero_backstory = None
+    hero_image_url = None
+    description = ''
+
+
     if request.method == "POST":
         description = request.form.get("description")
 
@@ -32,7 +39,7 @@ def home():
                 },
                 {
                     "role": "user",
-                    "content": f"Generate a superhero based on: {description}. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
+                    "content": f"Generate a superhero based on: {description}. Do not add anything else. Do not use markdown for bolding or italics. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
                 }
             ]
         }
@@ -43,8 +50,8 @@ def home():
 
         pplx_response = requests.post(pplx_url, headers=pplx_headers, json=pplx_payload)
 
-        hero_name = "Unknown Hero"
-        hero_backstory = "No backstory provided."
+        hero_name = clean_generated_text("Unknown Hero")
+        hero_backstory = clean_generated_text("No backstory provided.")
 
         if pplx_response.status_code == 200:
             generated_text = pplx_response.json()["choices"][0]["message"]["content"]
@@ -57,8 +64,6 @@ def home():
             app.logger.error(f"Perplexity API Error: {pplx_response.status_code} - {pplx_response.text}")
 
         # --- Image generation clearly using NEBIUS API ---
-        image_prompt = f"A detailed vibrant anatomically correct portrait of superhero named {hero_name}, heroic pose, superhero comic style with realistic joint articulation, related to: {description}"
-
         hero_image_url = None
 
         image_prompt = (f"A detailed, anatomically correct and vibrant comic-style portrait of superhero {hero_name},"
@@ -96,6 +101,7 @@ def home():
                                description=description)
 
     return render_template("index.html")
+
 
 
 if __name__ == "__main__":

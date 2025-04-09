@@ -6,6 +6,14 @@
     <title>Superhero Generator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
 
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon_io/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon_io/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon_io/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon_io/site.webmanifest') }}">
+
+
+
         <!-- Custom styles to enhance page visibility -->
     <style>
         body {
@@ -20,45 +28,7 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="">
-            <img src="{{ url_for('static', filename='supervillain-dark-skin-tone.svg') }}" alt="Superhero Logo" width="112" height="28">
-        </a>
-
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item">Home</a>
-            <a class="navbar-item">Documentation</a>
-
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">More</a>
-                <div class="navbar-dropdown">
-                    <a class="navbar-item">About</a>
-                    <a class="navbar-item">Contact</a>
-                    <a class="navbar-item">Report an issue</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="buttons">
-                    <a class="button is-primary"><strong>Sign up</strong></a>
-                    <a class="button is-light">Log in</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+{% include 'navbar.html' %}
 
 <!-- Main Content Container -->
 <div class="section">
@@ -85,7 +55,9 @@
         <form method="POST" class="mt-5">
             <div class="field">
                 <div class="control">
-                    <textarea class="textarea" name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
+                    <label>
+                        <textarea class="textarea" name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
+                    </label>
                 </div>
             </div>
             <div class="field">
@@ -97,6 +69,10 @@
 
     </div>
 </div>
+
+<!-- Footer -->
+{% include 'footer.html' %}
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
