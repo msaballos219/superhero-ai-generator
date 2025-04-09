@@ -57,9 +57,14 @@ def home():
             app.logger.error(f"Perplexity API Error: {pplx_response.status_code} - {pplx_response.text}")
 
         # --- Image generation clearly using NEBIUS API ---
-        image_prompt = f"A detailed vibrant portrait of superhero named {hero_name}, heroic pose, superhero comic style, vividly related to: {description}"
+        image_prompt = f"A detailed vibrant anatomically correct portrait of superhero named {hero_name}, heroic pose, superhero comic style with realistic joint articulation, related to: {description}"
 
         hero_image_url = None
+
+        image_prompt = (f"A detailed, anatomically correct and vibrant comic-style portrait of superhero {hero_name},"
+                f" depicted in a realistic heroic pose with accurate musculature, proportional limbs,"
+                f" clear anatomy, correct joint articulation, highly detailed artwork, high resolution,"
+                f" professional comic book illustration. Based on: {description}")
 
         try:
             image_response = nebius_client.images.generate(
@@ -67,12 +72,17 @@ def home():
                 response_format="url",
                 prompt=image_prompt,
                 extra_body={
-                    "response_extension": "webp",
-                    "width": 1024,
-                    "height": 1024,
-                    "num_inference_steps": 30,
-                    "negative_prompt": "",
-                    "seed": -1
+                "response_extension": "webp",
+                "width": 1024,
+                "height": 1024,
+                "num_inference_steps": 50,  # Slightly increased explicitly for quality
+                "negative_prompt": (
+                    "bad anatomy, bad proportions, blurry, cloned face, cropped, deformed, dehydrated, disfigured, duplicate, error, extra arms, "
+                    "extra fingers, extra legs, extra limbs, fused fingers, gross proportions, jpeg artifacts, long neck, low quality, lowres, malformed limbs, "
+                    "missing arms, missing legs, morbid, mutated hands, mutation, mutilated, out of frame, poorly drawn face, poorly drawn hands, signature, text, "
+                    "too many fingers, ugly, username, watermark, worst quality, "
+                    "asymmetric eyes, misshapen muscles, twisted limbs, irregular joints, distorted face, incorrect bone structure, exaggerated proportions"),
+                "seed": -1  # Explicitly non-random seed for consistency and repeatability of results
                 }
             )
             hero_image_url = image_response.data[0].url
