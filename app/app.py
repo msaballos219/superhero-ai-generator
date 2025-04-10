@@ -69,7 +69,7 @@ def home():
         image_prompt = (f"A detailed, anatomically correct and vibrant {image_theme}-style portrait of superhero {hero_name},"
                 f" depicted in a realistic heroic pose with accurate musculature, proportional limbs,"
                 f" clear anatomy, correct joint articulation, highly detailed artwork, high resolution,"
-                f" professional comic book illustration. Based on: {description}.")
+                f" and professional. Based on: {description}.")
 
         try:
             image_response = nebius_client.images.generate(
