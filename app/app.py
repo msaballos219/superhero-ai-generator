@@ -19,14 +19,13 @@ nebius_client = OpenAI(
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    hero_name = None
-    hero_backstory = None
-    hero_image_url = None
-    description = ''
-
 
     if request.method == "POST":
         description = request.form.get("description")
+        image_theme = request.form.get("image_theme")
+
+        if not image_theme:
+            image_theme = "Comicbook"
 
         # --- Text generation (Perplexity AI) ---
         pplx_url = "https://api.perplexity.ai/chat/completions"
@@ -39,7 +38,7 @@ def home():
                 },
                 {
                     "role": "user",
-                    "content": f"Generate a superhero based on: {description}. Do not add anything else. Do not use markdown for bolding or italics. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
+                    "content": f"Generate a superhero with a theme of {image_theme} based on: {description}. Do not add anything else. Do not use markdown for bolding or italics. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
                 }
             ]
         }
@@ -66,21 +65,22 @@ def home():
         # --- Image generation clearly using NEBIUS API ---
         hero_image_url = None
 
-        image_prompt = (f"A detailed, anatomically correct and vibrant comic-style portrait of superhero {hero_name},"
+
+        image_prompt = (f"A detailed, anatomically correct and vibrant {image_theme}-style portrait of superhero {hero_name},"
                 f" depicted in a realistic heroic pose with accurate musculature, proportional limbs,"
                 f" clear anatomy, correct joint articulation, highly detailed artwork, high resolution,"
-                f" professional comic book illustration. Based on: {description}")
+                f" professional comic book illustration. Based on: {description}.")
 
         try:
             image_response = nebius_client.images.generate(
-                model="stability-ai/sdxl",
+                model="black-forest-labs/flux-schnell",
                 response_format="url",
                 prompt=image_prompt,
                 extra_body={
                 "response_extension": "webp",
                 "width": 1024,
                 "height": 1024,
-                "num_inference_steps": 50,  # Slightly increased explicitly for quality
+                "num_inference_steps": 5,  # Slightly increased explicitly for quality
                 "negative_prompt": (
                     "bad anatomy, bad proportions, blurry, cloned face, cropped, deformed, dehydrated, disfigured, duplicate, error, extra arms, "
                     "extra fingers, extra legs, extra limbs, fused fingers, gross proportions, jpeg artifacts, long neck, low quality, lowres, malformed limbs, "
