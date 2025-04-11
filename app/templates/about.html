@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="English">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Superhero Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://www.jsdelivr.com/package/npm/@creativebulma/bulma-tooltip">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="{{ url_for('static', filename='favicon_io/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="{{ url_for('static', filename='favicon_io/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="{{ url_for('static', filename='favicon_io/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon_io/site.webmanifest') }}">
+
+
+    <!-- Custom styles to enhance page visibility -->
+    <style>
+        body {
+            background-color: #3ca6a0; /* Soft pastel shade for gentle visibility */
+        }
+
+        /*  textarea outline for clarity */
+        .textarea {
+            border: 2px solid #3273dc; /* Soft Bulma-blue border */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+{% include 'navbar.html' %}
+
+
+<!-- About me -->
+<div class="section">
+    <div class="container has-text-centered">
+        <h1 class="title is-1">About</h1>
+        <p>This is a simple Flask application that generates superheroes based on a user-provided description.</p>
+    </div>
+</div>
+
+
+
+<!-- Footer -->
+{% include 'footer.html' %}
