@@ -1,26 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="English">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Superhero Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://www.jsdelivr.com/package/npm/@creativebulma/bulma-tooltip">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="{{ url_for('static', filename='favicon_io/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="{{ url_for('static', filename='favicon_io/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="{{ url_for('static', filename='favicon_io/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon_io/site.webmanifest') }}">
+
+
+    <!-- Custom styles to enhance page visibility -->
+    <style>
+        body {
+            background-color: #3ca6a0; /* Soft pastel shade for gentle visibility */
+        }
+
+        /*  textarea outline for clarity */
+        .textarea {
+            border: 2px solid #3273dc; /* Soft Bulma-blue border */
+        }
+    </style>
 </head>
 <body>
-<h1>Superhero Generator</h1>
-{% if hero_name and hero_backstory %}
-    <h2>{{ hero_name }}</h2>
-    <p>{{ hero_backstory }}</p>
-    {% if hero_image_url %}
-        <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
-    {% else %}
-        <p>(No image generated!)</p>
-    {% endif %}
-{% endif %}
 
-<form method="POST">
-    <label>
-        <textarea name="description" placeholder="Describe your superhero explicitly">{{ description or "" }}</textarea>
-    </label><br>
-    <button type="submit">Generate Hero + Image!</button>
-</form>
+<!-- Navbar -->
+{% include 'navbar.html' %}
+
+<!-- Main Content Container -->
+<div class="section">
+    <div class="container has-text-centered">
+        <!-- Hero Image Container -->
+        <div class="box" style="display: inline-block;">
+            {% if hero_image_url %}
+                <img src="{{ hero_image_url }}" alt="{{ hero_name }}" style="max-width:500px;">
+            {% else %}
+                <img src="{{ url_for('static', filename='superhero-placeholder.jpg') }}" alt="Placeholder"
+                     style="max-width:500px;">
+            {% endif %}
+        </div>
+
+        <!-- Hero Card -->
+        <div class="card mt-5">
+
+            <!-- Hero Options Section (Downloads and Themes) -->
+            <div class="card-content">
+                <div class="content">
+                    <h3 class="title is-4">Customization</h3>
+
+                    <!-- Download Hero Image Button -->
+
+                    <a
+                            href="{{ hero_image_url }}"
+                            download="{{ hero_name | replace(' ', '_') }}.jpg"
+                            class="button is-primary is-small"
+                            aria-label="Download {{ hero_name }} image"
+                            title="Download {{ hero_name }} image"
+                    >
+                        <span class="icon">
+                            <img src="{{ url_for('static', filename='icons/inbox.png') }}"
+                                 alt="Download {{ hero_name }} image" style="width:20px; height:auto;">
+                        </span>
+                        <span>Download</span>
+                    </a>
+
+
+                    <!--  Themes Selector -->
+                    <div class="section is-small">
+                        <h4 class="subtitle is-5">Themes:</h4>
+                        <div class="buttons has-addons is-centered">
+                            <input type="hidden" id="image_theme" name="image_theme" value="">
+
+                            <!-- Theme Buttons with Tooltips -->
+                            <button class="button theme-button"
+                                    onclick="selectTheme(this, 'pop_art')">
+                                <img src="{{ url_for('static', filename='buttons/pop_art.jpg') }}" alt="Pop art theme"
+                                     style="height:45px; width:auto;">
+                            </button>
+                            <button class="button theme-button"
+                                    onclick="selectTheme(this, 'steampunk')">
+                                <img src="{{ url_for('static', filename='buttons/steampunk.jpg') }}"
+                                     alt="Steampunk theme" style="height:45px; width:auto;">
+                            </button>
+                            <button class="button theme-button"
+                                    onclick="selectTheme(this, 'sci_fi')">
+                                <img src="{{ url_for('static', filename='buttons/sci_fi.jpg') }}" alt="SciFi theme"
+                                     style="height:45px; width:auto;">
+                            </button>
+                            <button class="button theme-button"
+                                    onclick="selectTheme(this, 'fantasy')">
+                                <img src="{{ url_for('static', filename='buttons/fantasy.jpg') }}" alt="Fantasy theme"
+                                     style="height:45px; width:auto;">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Hero Name & Backstory section -->
+            {% if hero_name and hero_backstory %}
+                <div class="card-content has-background-light">
+                    <div class="content">
+                        <h2 class="title is-3">{{ hero_name }}</h2>
+                        <p>{{ hero_backstory }}</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Input Form clearly separated -->
+            <footer class="card-footer is-flex is-justify-content-center is-align-items-center">
+                <div class="card-content" style="width: 100%; max-width: 600px;">
+                    <form method="POST">
+                        <div class="field">
+                            <div class="control">
+                                <textarea class="textarea" name="description"
+                                          placeholder="Describe your dream superhero.">{{ description or "" }}</textarea>
+                            </div>
+                        </div>
+                        <div class="field has-text-centered">
+                            <div class="control">
+                                <button class="button is-primary is-medium" type="submit">Generate Hero!</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </footer>
+
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+{% include 'footer.html' %}
+
+
+<script>
+
+    function selectTheme(button, theme) {
+        document.getElementById("image_theme").value = theme;
+
+        // Remove 'is-selected' from all buttons
+        const buttons = document.querySelectorAll('.theme-button');
+        buttons.forEach(btn => btn.classList.remove('is-selected', 'is-info'));
+
+        // Add 'is-selected' to the clicked button
+        button.classList.add('is-selected', 'is-info');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        //  select navbar burger element
+        const burger = document.querySelector('.navbar-burger');
+        const menu = document.querySelector('.navbar-menu');
+
+        //  click event to toggle menu visibility
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('is-active');
+            menu.classList.toggle('is-active');
+        });
+    });
+</script>
+
 
 </body>
 </html>

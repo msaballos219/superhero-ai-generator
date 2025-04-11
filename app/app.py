@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from utils.clean_text import clean_generated_text
 import requests
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -17,9 +18,14 @@ nebius_client = OpenAI(
 )
 
 @app.route("/", methods=["GET", "POST"])
-def home():
+def index():
+
     if request.method == "POST":
         description = request.form.get("description")
+        image_theme = request.form.get("image_theme")
+
+        if not image_theme:
+            image_theme = "Comicbook"
 
         # --- Text generation (Perplexity AI) ---
         pplx_url = "https://api.perplexity.ai/chat/completions"
@@ -32,7 +38,7 @@ def home():
                 },
                 {
                     "role": "user",
-                    "content": f"Generate a superhero based on: {description}. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
+                    "content": f"Generate a superhero with a theme of {image_theme} based on: {description}. Do not add anything else. Do not use markdown for bolding or italics. Format explicitly as:\n\nName: <hero_name>\nBackstory: <hero_backstory>"
                 }
             ]
         }
@@ -43,8 +49,8 @@ def home():
 
         pplx_response = requests.post(pplx_url, headers=pplx_headers, json=pplx_payload)
 
-        hero_name = "Unknown Hero"
-        hero_backstory = "No backstory provided."
+        hero_name = clean_generated_text("Unknown Hero")
+        hero_backstory = clean_generated_text("No backstory provided.")
 
         if pplx_response.status_code == 200:
             generated_text = pplx_response.json()["choices"][0]["message"]["content"]
@@ -57,22 +63,31 @@ def home():
             app.logger.error(f"Perplexity API Error: {pplx_response.status_code} - {pplx_response.text}")
 
         # --- Image generation clearly using NEBIUS API ---
-        image_prompt = f"A detailed vibrant portrait of superhero named {hero_name}, heroic pose, superhero comic style, vividly related to: {description}"
-
         hero_image_url = None
+
+
+        image_prompt = (f"A detailed, anatomically correct and vibrant {image_theme}-style portrait of superhero {hero_name},"
+                f" depicted in a realistic heroic pose with accurate musculature, proportional limbs,"
+                f" clear anatomy, correct joint articulation, highly detailed artwork, high resolution,"
+                f" and professional. Based on: {description}.")
 
         try:
             image_response = nebius_client.images.generate(
-                model="stability-ai/sdxl",
+                model="black-forest-labs/flux-schnell",
                 response_format="url",
                 prompt=image_prompt,
                 extra_body={
-                    "response_extension": "webp",
-                    "width": 1024,
-                    "height": 1024,
-                    "num_inference_steps": 30,
-                    "negative_prompt": "",
-                    "seed": -1
+                "response_extension": "webp",
+                "width": 1024,
+                "height": 1024,
+                "num_inference_steps": 5,  # Slightly increased explicitly for quality
+                "negative_prompt": (
+                    "bad anatomy, bad proportions, blurry, cloned face, cropped, deformed, dehydrated, disfigured, duplicate, error, extra arms, "
+                    "extra fingers, extra legs, extra limbs, fused fingers, gross proportions, jpeg artifacts, long neck, low quality, lowres, malformed limbs, "
+                    "missing arms, missing legs, morbid, mutated hands, mutation, mutilated, out of frame, poorly drawn face, poorly drawn hands, signature, text, "
+                    "too many fingers, ugly, username, watermark, worst quality, "
+                    "asymmetric eyes, misshapen muscles, twisted limbs, irregular joints, distorted face, incorrect bone structure, exaggerated proportions"),
+                "seed": -1  # Explicitly non-random seed for consistency and repeatability of results
                 }
             )
             hero_image_url = image_response.data[0].url
@@ -88,5 +103,14 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
